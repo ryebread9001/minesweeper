@@ -1,15 +1,13 @@
 var grid = document.getElementById("grid");
-
+var button = document.getElementById("button")
 var mineNum = 20;
-
-
+var winCount = 0;
 
 createGrid();
 
-
 function createGrid() {
 
-
+  grid.innerHTML='';
   for (var i=0;i<20;i++){
     var row = grid.insertRow(i);
     for (var j=0;j<20;j++){
@@ -32,45 +30,69 @@ function addMines() {
   }
 }
 
-function clickCell(cell) {
-
-
-
-
-  var mineCount=0;
-  var cellRow = cell.parentNode.rowIndex;
-  var cellCol = cell.cellIndex;
-
-  for (var i=Math.max(cellRow-1,0);i<=Math.min(cellRow+1,19);i++) {
-    for (var j=Math.max(cellCol-1,0);j<=Math.min(cellCol+1,19);j++) {
-      if (grid.rows[i].cells[j].getAttribute("mine")=="true") {
-        mineCount++;
+function checkWin() {
+  winCount = 0;
+  for (var i=0;i<=19;i++) {
+    for (var j=0;j<=19;j++) {
+      if (grid.rows[i].cells[j].getAttribute("mine")=="true" && grid.rows[i].cells[j].innerHTML == "!") {
+        winCount++;
       }
     }
   }
-
-
-
-  if (cell.getAttribute("mine") == "true") {
-    cell.innerHTML = "X";
-    alert("YOU LOSE");
-  } else {
-    cell.style.color = "#"+(50*mineCount).toString(16)+(50).toString(16)+(50).toString(16);
-    cell.innerHTML = mineCount;
-
+  if (winCount >= mineNum) {
+    alert("YOU WIN");
   }
+}
 
-  if (mineCount == 0) {
-    for (var i=cellRow-1;i<=cellRow+1;i++) {
-      for (var j=cellCol-1;j<=cellCol+1;j++) {
-        if (grid.rows[i].cells[j].innerHTML=="") {
+function clickCell(cell) {
 
-          clickCell(grid.rows[i].cells[j]);
+  if (event.shiftKey) {
+    cell.innerHTML = "!";
+    checkWin();
+  } else {
+    var mineCount=0;
+    var cellRow = cell.parentNode.rowIndex;
+    var cellCol = cell.cellIndex;
 
+    for (var i=Math.max(cellRow-1,0);i<=Math.min(cellRow+1,19);i++) {
+      for (var j=Math.max(cellCol-1,0);j<=Math.min(cellCol+1,19);j++) {
+        if (grid.rows[i].cells[j].getAttribute("mine")=="true") {
+          mineCount++;
         }
       }
     }
+
+
+
+
+
+    if (cell.getAttribute("mine") == "true") {
+      cell.innerHTML = "X";
+      alert("YOU LOSE");
+      createGrid();
+    } else {
+      cell.style.color = "#"+(50*mineCount).toString(16)+(50).toString(16)+(50).toString(16);
+      cell.innerHTML = mineCount;
+
+    }
+
+    if (mineCount == 0) {
+      for (var i=Math.max(cellRow-1,0);i<=Math.min(cellRow+1,19);i++) {
+        for (var j=Math.max(cellCol-1,0);j<=Math.min(cellCol+1,19);j++) {
+          if (grid.rows[i].cells[j].innerHTML=="") {
+
+            clickCell(grid.rows[i].cells[j]);
+
+          }
+        }
+      }
+    }
+
   }
+
+
+
+
 
 
 }
